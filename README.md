@@ -1,5 +1,7 @@
 # Graphite
 
+[![Build Status](https://travis-ci.org/go-graph/graphite.svg)](https://travis-ci.org/go-graph/graphite)
+
 Graphics files processor
 
 ## Contribue to the project
