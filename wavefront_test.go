@@ -65,3 +65,59 @@ func TestParseFace4NormalsTexures(t *testing.T) {
 	assert.Equal(t, []int32{0, 1, 2, 3, 4, 5, 6, 7, 8}, w.triangles[0])
 	assert.Equal(t, []int32{6, 7, 8, 9, 10, 11, 0, 1, 2}, w.triangles[1])
 }
+
+func TestCompile(t *testing.T) {
+	w := Wavefront{name: "triangle"}
+	w.parseLine("v 0 0 0")
+	w.parseLine("v 1 0 0")
+	w.parseLine("v 1 1 0")
+	w.parseLine("f 1 2 3")
+	mesh, err := w.compile()
+	assert.Nil(t, err)
+	assert.Equal(t, []float32{0, 0, 0, 1, 0, 0, 1, 1, 0}, mesh.Vertex)
+}
+
+func TestCompileNormal(t *testing.T) {
+	w := Wavefront{name: "triangle"}
+	w.parseLine("v 0 0 0")
+	w.parseLine("v 1 0 0")
+	w.parseLine("v 1 1 0")
+	w.parseLine("vn 0 0 1")
+	w.parseLine("f 1//1 2//1 3//1")
+	mesh, err := w.compile()
+	assert.Nil(t, err)
+	assert.Equal(t, []float32{0, 0, 0, 1, 0, 0, 1, 1, 0}, mesh.Vertex)
+	assert.Equal(t, []float32{0, 0, 1, 0, 0, 1, 0, 0, 1}, mesh.Normal)
+}
+
+func TestCompileTexture(t *testing.T) {
+	w := Wavefront{name: "triangle"}
+	w.parseLine("v 0 0 0")
+	w.parseLine("v 1 0 0")
+	w.parseLine("v 1 1 0")
+	w.parseLine("vt 0 1")
+	w.parseLine("vt 1 1")
+	w.parseLine("vt 1 0")
+	w.parseLine("f 1/1 2/2 3/3")
+	mesh, err := w.compile()
+	assert.Nil(t, err)
+	assert.Equal(t, []float32{0, 0, 0, 1, 0, 0, 1, 1, 0}, mesh.Vertex)
+	assert.Equal(t, []float32{0, 1, 1, 1, 1, 0}, mesh.Texture)
+}
+
+func TestCompileNormalTexture(t *testing.T) {
+	w := Wavefront{name: "triangle"}
+	w.parseLine("v 0 0 0")
+	w.parseLine("v 1 0 0")
+	w.parseLine("v 1 1 0")
+	w.parseLine("vt 0 0")
+	w.parseLine("vt 1 0")
+	w.parseLine("vt 1 1")
+	w.parseLine("vn 0 0 1")
+	w.parseLine("f 1/1/1 2/2/1 3/3/1")
+	mesh, err := w.compile()
+	assert.Nil(t, err)
+	assert.Equal(t, []float32{0, 0, 0, 1, 0, 0, 1, 1, 0}, mesh.Vertex)
+	assert.Equal(t, []float32{0, 0, 1, 0, 0, 1, 0, 0, 1}, mesh.Normal)
+	assert.Equal(t, []float32{0, 0, 1, 0, 1, 1}, mesh.Texture)
+}

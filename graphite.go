@@ -55,16 +55,16 @@ func PlainText(path string) (PlainTextFile, error) {
 }
 
 type loader interface {
-	BuildMesh() (Mesh, error) // parse the file and return the vertex array geometry
-	Compile() (Mesh, error)   // compile GeomeryFile structure into vertey array
-	parseLine()               // line by line parser
+	Build() (Mesh, error)   // parse the file and return the vertex array geometry
+	compile() (Mesh, error) // compile GeomeryFile structure into vertey array
+	parseLine()             // line by line parser
 }
 
 func Geometry(path string) (Mesh, error) {
 	switch filepath.Ext(path) {
 	case ".obj":
 		file := Wavefront{path: path}
-		return file.BuildMesh()
+		return file.Build()
 	case ".ply":
 		return Mesh{}, errors.New("Pending Implementation: Polygon(.ply)")
 	default:

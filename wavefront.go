@@ -12,7 +12,7 @@ import (
 
 type Wavefront GeometryFile
 
-func (w Wavefront) BuildMesh() (Mesh, error) {
+func (w Wavefront) Build() (Mesh, error) {
 	w.name, _ = StripNameExt(w.path)
 	file, err := os.Open(w.path)
 	if err != nil {
@@ -32,7 +32,7 @@ func (w Wavefront) BuildMesh() (Mesh, error) {
 		panic(err)
 	}
 
-	return w.Compile()
+	return w.compile()
 }
 
 func (w *Wavefront) parseLine(line string) {
@@ -83,8 +83,7 @@ func (w *Wavefront) parseLine(line string) {
 	}
 }
 
-func (w *Wavefront) Compile() (Mesh, error) {
-	start := time.Now()
+func (w *Wavefront) compile() (Mesh, error) {
 	var (
 		out_vertex_list  []float32
 		out_texture_list []float32
@@ -112,7 +111,7 @@ func (w *Wavefront) Compile() (Mesh, error) {
 					out_texture_list = append(out_texture_list, w.vertex_texture[triangle[idx+1]-1]...)
 				}
 			}
-			if len(out_vertex_list) != len(out_texture_list) {
+			if len(out_vertex_list)/3 != len(out_texture_list)/2 {
 				return Mesh{}, errors.New("Compilation Error: mismatch length between vertex and texture arrays")
 			}
 		}
@@ -135,15 +134,13 @@ func (w *Wavefront) Compile() (Mesh, error) {
 				out_normal_list = append(out_normal_list, w.vertex_normal[triangle[idx+2]-1]...)
 			}
 		}
-		if len(out_vertex_list) != len(out_normal_list) || len(out_vertex_list) != len(out_texture_list) {
+		if len(out_vertex_list) != len(out_normal_list) || len(out_vertex_list)/3 != len(out_texture_list)/2 {
 			return Mesh{}, errors.New("Compilation Error: mismatch length vertex arrays")
 		}
 	default:
-		return Mesh{}, errors.New("File integrity compromised: Face offset invalid")
+		return Mesh{}, errors.New("Offset invalid")
 	}
 
-	elapsed := time.Since(start)
-	log.Printf("Compiled: %s[s]", elapsed)
 	return Mesh{Name: w.name, Vertex: out_vertex_list, Normal: out_normal_list, Texture: out_texture_list}, nil
 }
 
