@@ -3,30 +3,23 @@ package graphite
 import (
 	"bufio"
 	"errors"
-	"log"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Wavefront GeometryFile
 
-func (w Wavefront) Build() (Mesh, error) {
-	w.name, _ = StripNameExt(w.path)
+func (w Wavefront) Open() (Mesh, error) {
 	file, err := os.Open(w.path)
 	if err != nil {
 		panic(err)
 	}
 
-	start := time.Now()
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		w.parseLine(scanner.Text())
 	}
-	elapsed := time.Since(start)
-	log.Printf("Geometry: Vertex(%d) Normal(%d) Texture(%d) Triangles(%d)", len(w.vertex), len(w.vertex_normal), len(w.vertex_texture), len(w.triangles))
-	log.Printf("Parsed: %s[s]", elapsed)
 
 	if err := scanner.Err(); err != nil {
 		panic(err)
