@@ -4,6 +4,18 @@
 
 Graphics files processor
 
+## TODO
+
+- [ ] Loaders
+  - [x] Waveform(.obj)
+  - [ ] Polygon(.ply)
+  - [ ] Stereo Lithography(.stl)
+- [ ] Writers
+  - [ ] WaveForm(.obj)
+  - [ ] Polygon(.ply)
+  - [ ] Stereo Lithography(.stl)
+- [ ] Command Line
+
 ## Contribue to the project
 
 To contribuer Just follow the next stepts:
