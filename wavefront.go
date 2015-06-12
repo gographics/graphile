@@ -49,11 +49,13 @@ func (w *Wavefront) parseLine(line string) {
 		x, _ := strconv.ParseFloat(larray[1], 32)
 		y, _ := strconv.ParseFloat(larray[2], 32)
 		w.vertex_texture = append(w.vertex_texture, []float32{float32(x), float32(y)})
+		w.hasTextures = w.hasTextures || true
 	case "vn":
 		x, _ := strconv.ParseFloat(larray[1], 32)
 		y, _ := strconv.ParseFloat(larray[2], 32)
 		z, _ := strconv.ParseFloat(larray[3], 32)
 		w.vertex_normal = append(w.vertex_normal, []float32{float32(x), float32(y), float32(z)})
+		w.hasNormals = w.hasNormals || true
 	case "f":
 		buffer := []int32{}
 		for _, face_index := range larray[1:] {
@@ -63,21 +65,16 @@ func (w *Wavefront) parseLine(line string) {
 			}
 		}
 
-		offset := 1
-		if w.hasNormals() {
-			offset++
-		}
-		if w.hasTextures() {
-			offset++
-		}
+		offset := w.offset()
+		pivot := offset * 3
 
 		switch len(buffer) / offset {
 		case 3:
 			w.triangles = append(w.triangles, buffer)
 		case 4:
 			buffer = append(buffer, buffer[0:offset]...)
-			w.triangles = append(w.triangles, buffer[:(len(buffer)/offset)+1]) // T1
-			w.triangles = append(w.triangles, buffer[(len(buffer)/offset)-1:]) // T2
+			w.triangles = append(w.triangles, buffer[:pivot])        // T1
+			w.triangles = append(w.triangles, buffer[pivot-offset:]) // T2
 		default:
 			return
 		}
@@ -94,14 +91,7 @@ func (w *Wavefront) Compile() (Mesh, error) {
 		out_normal_list  []float32
 	)
 
-	// set offset
-	offset := 1
-	if w.hasNormals() {
-		offset++
-	}
-	if w.hasTextures() {
-		offset++
-	}
+	offset := w.offset()
 
 	// sorting from faces indexes
 	switch offset {
@@ -115,7 +105,7 @@ func (w *Wavefront) Compile() (Mesh, error) {
 			return Mesh{}, errors.New("Compilation Error: mismatch length on vertex array")
 		}
 	case 2:
-		if w.hasTextures() {
+		if w.hasTextures {
 			for _, triangle := range w.triangles {
 				for idx := 0; idx < len(triangle); idx += offset {
 					out_vertex_list = append(out_vertex_list, w.vertex[triangle[idx]-1]...)
@@ -126,7 +116,7 @@ func (w *Wavefront) Compile() (Mesh, error) {
 				return Mesh{}, errors.New("Compilation Error: mismatch length between vertex and texture arrays")
 			}
 		}
-		if w.hasNormals() {
+		if w.hasNormals {
 			for _, triangle := range w.triangles {
 				for idx := 0; idx < len(triangle); idx += offset {
 					out_vertex_list = append(out_vertex_list, w.vertex[triangle[idx]-1]...)
@@ -157,10 +147,13 @@ func (w *Wavefront) Compile() (Mesh, error) {
 	return Mesh{Name: w.name, Vertex: out_vertex_list, Normal: out_normal_list, Texture: out_texture_list}, nil
 }
 
-func (w *Wavefront) hasTextures() bool {
-	return len(w.vertex_texture) > 0
-}
-
-func (w *Wavefront) hasNormals() bool {
-	return len(w.vertex_normal) > 0
+func (w *Wavefront) offset() int {
+	var offset int = 1
+	if w.hasNormals {
+		offset++
+	}
+	if w.hasTextures {
+		offset++
+	}
+	return offset
 }

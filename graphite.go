@@ -32,6 +32,9 @@ type GeometryFile struct {
 	vertex_texture [][]float32
 	vertex_normal  [][]float32
 	triangles      [][]int32
+
+	hasNormals  bool
+	hasTextures bool
 }
 
 func StripNameExt(path string) (name, ext string) {
@@ -54,9 +57,7 @@ func PlainText(path string) (PlainTextFile, error) {
 type loader interface {
 	BuildMesh() (Mesh, error) // parse the file and return the vertex array geometry
 	Compile() (Mesh, error)   // compile GeomeryFile structure into vertey array
-	lineParse()               // line by line parser
-	hasTextures() bool
-	hasNormals() bool
+	parseLine()               // line by line parser
 }
 
 func Geometry(path string) (Mesh, error) {
