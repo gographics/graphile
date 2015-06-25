@@ -1,4 +1,4 @@
-package graphite
+package graphile
 
 import (
 	"github.com/stretchr/testify/assert"

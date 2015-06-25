@@ -1,9 +1,10 @@
-package graphite
+package graphile
 
 import (
 	"path/filepath"
 )
 
+// Mesh geometry data representation
 type Mesh struct {
 	Name    string    `json:"name"`
 	Vertex  []float32 `json:"vertex"`
@@ -13,18 +14,20 @@ type Mesh struct {
 	Indices []uint32  `json:"indices"`
 }
 
+// GeometryFile store raw geometry before to compile into a mesh structure
 type GeometryFile struct {
-	name           string
-	path           string
-	vertex         [][]float32
-	vertex_texture [][]float32
-	vertex_normal  [][]float32
-	triangles      [][]int32
+	name          string
+	path          string
+	vertex        [][]float32
+	vertexTexture [][]float32
+	vertexNormal  [][]float32
+	triangles     [][]int32
 
 	hasNormals  bool
 	hasTextures bool
 }
 
+// PathStrip strip name and extension from file
 func PathStrip(path string) (name, ext string) {
 	_, name = filepath.Split(path)
 	ext = filepath.Ext(path)

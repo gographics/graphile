@@ -1,6 +1,6 @@
-# Graphite
+# Graphile
 
-[![Build Status](https://travis-ci.org/go-graph/graphite.svg)](https://travis-ci.org/go-graph/graphite)
+[![Build Status](https://travis-ci.org/gographics/graphile.svg)](https://travis-ci.org/gographics/graphile)
 
 Graphics files processor
 
