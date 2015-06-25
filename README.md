@@ -1,6 +1,6 @@
 # Graphile
 
-[![Build Status](https://travis-ci.org/gographics/graphile.svg)](https://travis-ci.org/gographics/graphile)
+[![wercker status](https://app.wercker.com/status/5d8db89458fe0768255453f44e4bf7cb/m "wercker status")](https://app.wercker.com/project/bykey/5d8db89458fe0768255453f44e4bf7cb) [![Build Status](https://travis-ci.org/gographics/graphile.svg)](https://travis-ci.org/gographics/graphile)
 
 Graphics files processor
 
