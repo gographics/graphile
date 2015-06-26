@@ -25,6 +25,8 @@ type GeometryFile struct {
 
 	hasNormals  bool
 	hasTextures bool
+
+	vertexSize int
 }
 
 // PathStrip strip name and extension from file
