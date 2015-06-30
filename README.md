@@ -8,7 +8,7 @@ Graphics files processor
 
 - [ ] Loaders
   - [x] Waveform(.obj)
-  - [ ] Polygon(.ply)
+  - [x] Polygon(.ply)
   - [ ] Stereo Lithography(.stl)
 - [ ] Writers
   - [ ] WaveForm(.obj)
