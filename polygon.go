@@ -1,11 +1,30 @@
 package graphile
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
 
 type polygon GeometryFile
+
+func (p polygon) Open() (Mesh, error) {
+	file, err := os.Open(w.path)
+	if err != nil {
+		panic(err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		w.parseLine(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	return w.compile()
+}
 
 func (p *polygon) parseLine(line string) {
 	if skipLine(line) {
@@ -35,6 +54,20 @@ func (p *polygon) parseLine(line string) {
 			p.triangles = append(p.triangles, []int32{int32(c), int32(d), int32(a)})
 		}
 	}
+}
+
+func (p *polygon) compile() (Mesh, error) {
+	var outVertexList []float32
+	for _, triangle := range p.triangles {
+		for idx := 0; idx < len(triangle); idx++ {
+			outVertexList = append(outVertexList, p.vertex[triangle[idx]-1]...)
+		}
+	}
+	if len(outVertexList) != 9*len(p.triangles) {
+		return Mesh{}, errors.New("Compilation Error: mismatch length on vertex array")
+	}
+
+	return Mesh{Name: p.name, Vertex: outVertexList}, nil
 }
 
 func skipLine(s string) bool {
